@@ -90,7 +90,7 @@ int main() { // Yes, it has to have an int for the return type
 
 
     // Task 8  Looping to successfully open a file, asking user for the name
-
+    
 
     // Task 9  Looping, reading file word by "word".
 
