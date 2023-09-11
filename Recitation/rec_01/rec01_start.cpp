@@ -30,7 +30,7 @@ int main() { // Yes, it has to have an int for the return type
 
     // Task 3  Displaying uninitialized variable
     int x;
-    cout << "x is: " << x << '\n';
+    // cout << "x is: " << x << '\n';
     
 
     // Task 4 Use the sizeof function to see the size in bytes of
