@@ -65,8 +65,8 @@ char decrypt_letter(int rotation, char letter)
 individually, and mutating the given line reference*/
 void decrypt_line(int rotation, string& line)
 {   
-    for (int i{}; i < line.size(); i++){
-        line[i] = decrypt_letter(rotation, line[i]);
+    for (int index{}; index < line.size(); index++){
+        line[index] = decrypt_letter(rotation, line[index]);
     }
 }
 
