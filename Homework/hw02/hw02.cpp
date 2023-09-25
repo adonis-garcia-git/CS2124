@@ -2,7 +2,7 @@
 Author: Adonis Garcia
 File: hw02.cpp
 Class: CS-2124
-Purpose: simulating medieval times warrier game
+Purpose: simulating medieval times warrier game using structs
 */
 
 #include <iostream>     //include I/O library
@@ -13,30 +13,46 @@ using namespace std;
 
 struct Warrior{
     string name;
-    int strength;
+    int strength{};
 };
 
+// Opens the file containing warrior commands and checks for successful opening
 void open_file(ifstream& command_file);
+
+// Executes the game by continuously reading and processing commands from the file
 void run_game(ifstream& command_file, vector<Warrior>& warriors);
+
+// Determines the command type and directs to the corresponding function for processing
 void command_parser(const string& command, ifstream& command_file, vector<Warrior>& warriors);
+
+// Adds a new warrior to the warriors vector after ensuring the warrior doesn't already exist
 void add_warrior(vector<Warrior>& warriors, ifstream& command_file);
+
+// Displays the total number of warriors and their individual names and strengths
 void display_status(const vector<Warrior>& warriors);
+
+// Prepares two warriors for a battle by fetching their names and triggering the battle
 void prepare_battle(vector<Warrior>& warriors, ifstream& command_file);
-int locate_warrior(const string& warrior, vector<Warrior> warriors);
+
+// Searches for a warrior in the warriors vector by name and returns its index or -1 if not found
+int locate_warrior(const string& warrior, const vector<Warrior> warriors);
+
+// Simulates a battle between two warriors, adjusting their strengths accordingly
+// and printing out the outcome of the battle
 void battle(Warrior& first_warrior, Warrior& second_warrior);
 
 
 int main(){
-
     vector<Warrior> warriors;
 
     ifstream command_file;
     open_file(command_file);
     run_game(command_file, warriors);    
 
+    command_file.close();
 
     return 0;
-}
+};
 
 void open_file(ifstream& command_file){
     command_file.open("warriors.txt");
@@ -68,11 +84,13 @@ void add_warrior(vector<Warrior>& warriors, ifstream& command_file){
     int strength;
     command_file >> name >> strength;
 
-    Warrior warrior;
-    warrior.name = name;
-    warrior.strength = strength;
+    if (locate_warrior(name, warriors) != -1){
+        cout << name << "already exists" << endl;
+    } else {
+        Warrior warrior{name, strength};
+        warriors.push_back(warrior);
+    };
 
-    warriors.push_back(warrior);
 };
 
 void display_status(const vector<Warrior>& warriors){
@@ -93,38 +111,62 @@ void prepare_battle(vector<Warrior>& warriors, ifstream& command_file){
     int first_index{locate_warrior(first_warrior, warriors)};
     int second_index{locate_warrior(second_warrior, warriors)};
 
-    battle(warriors[first_index], warriors[second_index]);
+    // If both warriors exist
+    if (first_index != -1 && second_index != -1){
+        battle(warriors[first_index], warriors[second_index]);
+        return;
+    }
+    
+    // If one of them doesn't exist
+    if (first_index == -1){
+        cout << first_warrior << " doesn't exist" << endl;
+    } else {
+        cout << second_warrior << " doens't exist" << endl;
+    };
 };
 
-int locate_warrior(const string& warrior, vector<Warrior> warriors){
+int locate_warrior(const string& warrior, const vector<Warrior> warriors){
     for (size_t index{}; index < warriors.size(); index++){
         if (warriors[index].name == warrior){
             return index;
         };
     };
-    cerr << warrior << " not found";
-    exit(1); 
+    
+    return -1; 
 };
 
-void battle(Warrior& first_warrior, Warrior& second_warrior){
-    if ((first_warrior.strength == 0) && (second_warrior.strength == 0)){
+void battle(Warrior& first_warrior, Warrior& second_warrior) {
+    // If both warriors are already dead
+    if (first_warrior.strength == 0 && second_warrior.strength == 0) {
         cout << "Oh, NO! They're both dead! Yuck!" << endl;
-    } else if (first_warrior.strength == 0){
+        return;
+    }
+
+    // If one of them is dead
+    if (first_warrior.strength == 0) {
         cout << "He's dead, " << second_warrior.name << endl;
-    } else if (second_warrior.strength == 0){
+        return;
+    }
+    if (second_warrior.strength == 0) {
         cout << "He's dead, " << first_warrior.name << endl;
-    } else if (first_warrior.strength > second_warrior.strength){
+        return;
+    }
+
+    // If neither of them is dead, compute the battle result
+    if (first_warrior.strength > second_warrior.strength) {
         first_warrior.strength -= second_warrior.strength;
         second_warrior.strength = 0;
         cout << first_warrior.name << " defeats " << second_warrior.name << endl;
-    } else if (first_warrior.strength < second_warrior.strength){
+    } 
+    else if (first_warrior.strength < second_warrior.strength) {
         second_warrior.strength -= first_warrior.strength;
         first_warrior.strength = 0;
         cout << second_warrior.name << " defeats " << first_warrior.name << endl;
-    } else {
+    } 
+    else { // Equal strength leads to mutual destruction
         first_warrior.strength = 0;
         second_warrior.strength = 0;
-        cout << "Mutual Annihilation: " << first_warrior.name;
-        cout << " and " << second_warrior.name << " die at each other's hands" << endl;
+        cout << "Mutual Annihilation: " << first_warrior.name
+             << " and " << second_warrior.name << " die at each other's hands" << endl;
     };
 };
