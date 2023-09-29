@@ -10,15 +10,6 @@ Purpose: simulating medieval times warrier game using classes
 #include <string>       //include string library
 #include <vector>       //include vector library
 using namespace std;
-
-void open_file(ifstream& file);
-void run_game(ifstream& file, vector<Warrior>& warrior_list);
-void prepare_battle(ifstream& file, vector<Warrior>& warrior_list);
-void battle(Warrior& first_warrior, Warrior& second_warrior);
-void add_warrior(ifstream& file, vector<Warrior>& warrior_list);
-int locate_warrior(const string& name, const vector<Warrior>& warrior_list);
-void display_status(vector<Warrior>& warrior_list);
-
 class Warrior{
     class Weapon{
         friend ostream& operator<<(ostream& os, const Weapon& aWeapon);
@@ -63,8 +54,16 @@ public:
 
 private:
     Weapon weapon;
-    const string& name;
+    const string name;
 };
+
+void open_file(ifstream& file);
+void run_game(ifstream& file, vector<Warrior>& warrior_list);
+void prepare_battle(ifstream& file, vector<Warrior>& warrior_list);
+void battle(Warrior& first_warrior, Warrior& second_warrior);
+void add_warrior(ifstream& file, vector<Warrior>& warrior_list);
+int locate_warrior(const string& name, const vector<Warrior>& warrior_list);
+void display_status(const vector<Warrior>& warrior_list);
 
 // overloading the output operator for the Warrior class
 ostream& operator<<(ostream& os, const Warrior& aWarrior){
@@ -81,6 +80,14 @@ ostream& operator<<(ostream& os, const Warrior::Weapon& aWeapon){
 
 // main function that prepares for and begins the simulation
 int main(){
+
+    ifstream file;
+    open_file(file);
+    vector<Warrior> warrior_list;
+    
+    run_game(file, warrior_list);
+
+    file.close();
     return 0;
 };
 
@@ -99,7 +106,7 @@ void run_game(ifstream& file, vector<Warrior>& warrior_list){
             add_warrior(file, warrior_list);
         } else if (command == "Status"){
             display_status(warrior_list);
-        } else {
+        } else if (command == "Battle"){
             prepare_battle(file, warrior_list);
         };
     };
@@ -111,9 +118,10 @@ void prepare_battle(ifstream& file, vector<Warrior>& warrior_list){
     file >> first_name >> second_name;
 
     int first_index{locate_warrior(first_name, warrior_list)};
-    int second_index{locate_warrior(first_name, warrior_list)};
+    int second_index{locate_warrior(second_name, warrior_list)};
 
     if (first_index != -1 && second_index != -1){
+        cout << first_name << " battles " << second_name << endl;
         battle(warrior_list[first_index], warrior_list[second_index]);
         return;
     };
@@ -156,11 +164,26 @@ void battle(Warrior& first_warrior, Warrior& second_warrior){
              << " and " << second_warrior.get_name() << " die at each other's hands" << endl;
     };
 
-    first_warrior.gets_hit(second_warrior.get_strength());
-    second_warrior.gets_hit(first_warrior.get_strength());
+    int first_warrior_strength{first_warrior.get_strength()};
+    int second_warrior_strength{second_warrior.get_strength()};
+
+    first_warrior.gets_hit(second_warrior_strength);
+    second_warrior.gets_hit(first_warrior_strength);
 };
 
-void add_warrior(ifstream& file, vector<Warrior>& warrior_list);
+void add_warrior(ifstream& file, vector<Warrior>& warrior_list){
+    string warrior_name;
+    string weapon_name;
+    int weapon_strength;
+    file >> warrior_name >> weapon_name >> weapon_strength;
+
+    if (locate_warrior(warrior_name, warrior_list) != -1){
+        cout << warrior_name << " already exists" << endl;
+        return;
+    };
+
+    warrior_list.emplace_back(warrior_name, weapon_name, weapon_strength);
+};
 
 int locate_warrior(const string& name, const vector<Warrior>& warrior_list){
     for (size_t index{}; index < warrior_list.size(); index++){
@@ -172,4 +195,9 @@ int locate_warrior(const string& name, const vector<Warrior>& warrior_list){
     return -1;
 };
 
-void display_status(vector<Warrior>& warrior_list);
+void display_status(const vector<Warrior>& warrior_list){
+    cout << "There are: " << warrior_list.size() << " warriors" << endl;
+    for (const Warrior& aWarrior: warrior_list){
+        cout << aWarrior;
+    };
+};
