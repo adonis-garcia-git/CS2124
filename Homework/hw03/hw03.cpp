@@ -68,14 +68,14 @@ private:
 
 // overloading the output operator for the Warrior class
 ostream& operator<<(ostream& os, const Warrior& aWarrior){
-    cout << "Warrior: " << aWarrior.name << ", weapon: "
+    os << "Warrior: " << aWarrior.name << ", weapon: "
     << aWarrior.weapon << endl;
     return os;
 };
 
 // overloading the output operator for the nested Weapon class
 ostream& operator<<(ostream& os, const Warrior::Weapon& aWeapon){
-    cout << aWeapon.weapon_name << ", " << aWeapon.strength;
+    os << aWeapon.weapon_name << ", " << aWeapon.strength;
     return os;
 };
 
