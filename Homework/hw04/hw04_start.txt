@@ -1,0 +1,170 @@
+/*
+  hw04_start.cpp
+  Association: Noble - Warrior
+  Test code for hw04
+ */
+
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+// Your Noble and Warrior classes should go here.
+// ...
+
+class Noble{
+     friend ostream& operator<<(ostream& os, const Noble& aNoble); 
+public:
+     Noble(const string& aName) : name(aName) {}
+
+     battle(Noble& otherNoble) {
+
+     }
+
+     bool isDead const {return is_dead;}
+
+     size_t locateWarrior(Warrior& aWarrior) const {
+          for (int i{}; i < army_size; i++){
+               if (army[i] == &aWarrior){
+                    return i;
+               }
+          }
+
+          return -1;
+     } 
+
+     void hire(Warrior& aWarrior) {
+          if (aWarrior.isHired()) || (aWarrior.getStrength() == 0) || (is_dead){
+               cout << name << " failed to hire " << aWarrior.getName() << endl;
+               return;
+          }
+
+          if (locateWarrior(aWarrior) != -1){
+               cout << name << " failed to hire " << aWarrior.getName() << endl;
+               return;
+          }
+
+          army_size += 1;
+          strength += aWarrior.getStrength();
+          army.push_back(&aWarrior);
+
+          aWarrior.gotHired();
+     }
+
+     void fire(Warrior& aWarrior) {
+          index = locateWarrior(aWarrior);
+
+          if (index == -1) || (is_dead){
+               cout << name << " failed to hire " << aWarrior.getName() << endl;
+               return;
+          }
+
+          for (int i{index}; i < army_size; i++){
+               if (i == (army_size - 1)){
+                    army.pop_back();
+               }
+
+               army[i] = army[i + 1]
+          }
+
+          army_size -= 1;
+          aWarrior.gotFired();
+          strength -= aWarrior.getStrength();
+     }
+private:
+     const string name;
+     vector<Warrior*> army; // maintain order
+     bool is_dead{false};
+     int strength{};
+     int army_size{};
+};
+
+class Warrior{
+     friend ostream& operator<<(ostream& os, const Warrior& aWarrior);
+public:
+     Warrior(const string& aName, int aStrength) : name(aName), strength(aStrength) {}
+
+     const string& getName() const {return name;}
+
+     int getStrength() const {return strength;}
+
+     bool isHired() const {return is_hired;}
+
+     void gotHired() {is_hired = true;}
+
+     void gotFired() {is_hired = false;}
+private:
+     const string name;
+     int strength;
+     bool is_hired{false};
+};
+
+ostream& operator<<(ostream& os, const Noble& aNoble) {
+     os << aNoble.name << " had an army of " << aNoble.army_size << endl;
+     for (int i{}; i < aNoble.army_size; i++){
+          os << '\t' << *aNoble.army[i] << endl;
+     }
+     return os;
+}
+
+ostream& operator<<(ostream& os, const Warrior& aWarrior) {
+     os << aWarrior.name << ": " << aWarrior.strength;
+     return os;
+}
+
+int main() {
+	
+    Noble art("King Arthur");
+    Noble lance("Lancelot du Lac");
+    Noble jim("Jim");
+    Noble linus("Linus Torvalds");
+    Noble billie("Bill Gates");
+	
+    Warrior cheetah("Tarzan", 10);
+    Warrior wizard("Merlin", 15);
+    Warrior theGovernator("Conan", 12);
+    Warrior nimoy("Spock", 15);
+    Warrior lawless("Xena", 20);
+    Warrior mrGreen("Hulk", 8);
+    Warrior dylan("Hercules", 3);
+	
+    jim.hire(nimoy);
+    lance.hire(theGovernator);
+    art.hire(wizard);
+    lance.hire(dylan);
+    linus.hire(lawless);
+    billie.hire(mrGreen);
+    art.hire(cheetah);
+    art.hire(nimoy);
+	
+    cout << "==========\n\n"
+         << "Status before all battles, etc.\n";
+    cout << jim << endl;
+    cout << lance << endl;
+    cout << art << endl;
+    cout << linus << endl;
+    cout << billie << endl;
+    cout << "==========\n\n";
+	
+    art.fire(cheetah);
+    cout << art << endl;
+
+    lance.fire(nimoy);
+    cout << lance << endl;
+    cout << "==========\n\n";
+
+    art.battle(lance);
+    jim.battle(lance);
+    linus.battle(billie);
+    billie.battle(lance);
+
+    cout << "==========\n\n"
+         << "Status after all battles, etc.\n";
+    cout << jim << endl;
+    cout << lance << endl;
+    cout << art << endl;
+    cout << linus << endl;
+    cout << billie << endl;
+    cout << "==========\n";
+	
+}

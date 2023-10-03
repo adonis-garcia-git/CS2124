@@ -10,13 +10,19 @@ Purpose: simulating medieval times warrier game using classes
 #include <string>       //include string library
 #include <vector>       //include vector library
 using namespace std;
+
+// Represents a Warrior with a nested Weapon class.
 class Warrior{
+    // Represents a Weapon with a name and strength.
     class Weapon{
         friend ostream& operator<<(ostream& os, const Weapon& aWeapon);
     public:
+        // Constructs a Weapon with a given name and strength.
         Weapon(const string& name, int strength)
         : weapon_name(name), strength(strength){};
 
+        // Reduces the weapon's strength by a specified number of units, 
+        // ensuring it never goes negative by setting to 0.
         void take_damage(int strength_units){
             strength -= strength_units;
             if (strength < 0){
@@ -24,61 +30,79 @@ class Warrior{
             };
         };
 
+        // Returns the current strength of the weapon.
         int get_weapon_strength() const {
             return strength;
         }
 
     private:
-        const string weapon_name;
-        int strength;
+        const string weapon_name;   // Weapon name
+        int strength;               // Weapon strength
     };
 
     friend ostream& operator<<(ostream& os, const Warrior& aWarrior);
     friend ostream& operator<<(ostream& os, const Weapon& aWeapon);
 
 public:
+    // Constructs a Warrior with a name and a weapon.
     Warrior(const string& aName, const string& weapon_name, int strength)
     : name(aName), weapon(weapon_name, strength) {};
 
+    // Returns the name of the Warrior.
     const string& get_name() const {
         return name;
     };
 
+    // Reduces the weapon's strength based on an opponent's attack.
     void gets_hit(int opponent_strength){
         weapon.take_damage(opponent_strength);
     };
 
+    // Returns the current strength of the Warrior's weapon.
     int get_strength() const {
         return weapon.get_weapon_strength();
     };
 
 private:
-    Weapon weapon;
-    const string name;
+    Weapon weapon;      // Warrior's weapon of Weapon class
+    const string name;  // Warrior's name
 };
 
+// Opens a file stream for reading the warrior data.
 void open_file(ifstream& file);
+
+// Manages the game, processing each command in the file: Warrior, Status, or Battle.
 void run_game(ifstream& file, vector<Warrior>& warrior_list);
+
+// Prepares two warriors for a battle by locating them and invoking the battle function.
 void prepare_battle(ifstream& file, vector<Warrior>& warrior_list);
+
+// Conducts a battle between two warriors, updating their strength accordingly.
 void battle(Warrior& first_warrior, Warrior& second_warrior);
+
+// Adds a new warrior to the list of warriors from the file's data.
 void add_warrior(ifstream& file, vector<Warrior>& warrior_list);
-int locate_warrior(const string& name, const vector<Warrior>& warrior_list);
+
+// Searches for and returns the index of a warrior by name. If not found, returns -1.
+size_t locate_warrior(const string& name, const vector<Warrior>& warrior_list);
+
+// Displays the current status of all warriors in the game.
 void display_status(const vector<Warrior>& warrior_list);
 
-// overloading the output operator for the Warrior class
+// Overloading the output operator for the Warrior class.
 ostream& operator<<(ostream& os, const Warrior& aWarrior){
     os << "Warrior: " << aWarrior.name << ", weapon: "
     << aWarrior.weapon << endl;
     return os;
 };
 
-// overloading the output operator for the nested Weapon class
+// Overloading the output operator for the nested Weapon class.
 ostream& operator<<(ostream& os, const Warrior::Weapon& aWeapon){
     os << aWeapon.weapon_name << ", " << aWeapon.strength;
     return os;
 };
 
-// main function that prepares for and begins the simulation
+// Main function that prepares for and begins the simulation.
 int main(){
 
     ifstream file;
@@ -117,8 +141,8 @@ void prepare_battle(ifstream& file, vector<Warrior>& warrior_list){
     string second_name;
     file >> first_name >> second_name;
 
-    int first_index{locate_warrior(first_name, warrior_list)};
-    int second_index{locate_warrior(second_name, warrior_list)};
+    size_t first_index{locate_warrior(first_name, warrior_list)};
+    size_t second_index{locate_warrior(second_name, warrior_list)};
 
     if (first_index != -1 && second_index != -1){
         cout << first_name << " battles " << second_name << endl;
@@ -185,7 +209,7 @@ void add_warrior(ifstream& file, vector<Warrior>& warrior_list){
     warrior_list.emplace_back(warrior_name, weapon_name, weapon_strength);
 };
 
-int locate_warrior(const string& name, const vector<Warrior>& warrior_list){
+size_t locate_warrior(const string& name, const vector<Warrior>& warrior_list){
     for (size_t index{}; index < warrior_list.size(); index++){
         if (warrior_list[index].get_name() == name){
             return index;
