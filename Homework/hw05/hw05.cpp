@@ -5,9 +5,6 @@ Class: CS-2124
 Purpose: simulating nobles and warriors using classes and pointers
 */
 
-//change error print statemetns
-//add unemployed warriors
-//add status command heading prints
 //split parser into multiple functions
 
 #include <iostream>
@@ -221,121 +218,143 @@ ostream& operator<<(ostream& os, const Warrior& aWarrior) {
 
 int main() {
 	vector<Noble*> nobles;
-    vector<Warrior*> warriors;
+     vector<Warrior*> warriors;
 
-    ifstream file;
-    open_file(file);
+     ifstream file;
+     open_file(file);
 
-    parser(file, nobles, warriors);
+     parser(file, nobles, warriors);
 
-    file.close();
-    nobles.clear();
-    warriors.clear();
+     file.close();
+     nobles.clear();
+     warriors.clear();
 }
 
 void open_file(ifstream& file){
-    file.open("nobleWarriors.txt");
-    if (!file){
-        cerr << "File couldn't be opened" << endl;
-        exit(1);
-    }
+     file.open("nobleWarriors.txt");
+     if (!file){
+          cerr << "File couldn't be opened" << endl;
+          exit(1);
+     }
 }
 
 void parser(ifstream& file, vector<Noble*>& nobles, vector<Warrior*>& warriors){
-    string command;
-    string name;
-    string name2;
-    string weapon_name;
-    double strength;
+     string command;
+     string name;
+     string name2;
+     string weapon_name;
+     double strength;
 
-    while (file >> command){
-        if (command == "Noble"){
-            file >> name;
-            if (locate_noble(name, nobles) == nobles.size()){
-                nobles.push_back(new Noble(name));
-            }
-            else {
-                cout << name << " already exists" << endl;
-            }
-        } else if (command == "Warrior"){
-            file >> name >> strength;
-            if (locate_warrior(name, warriors) == warriors.size()){
-                warriors.push_back(new Warrior(name, strength));
-            }
-            else {
-                cout << name << " already exists" << endl;
-            }
-        } else if (command == "Hire"){
-            file >> name >> name2;
-            if (locate_noble(name, nobles) == nobles.size()){
-                cout << name << " doesn't exist" << endl;
-            } else if (locate_warrior(name2, warriors) == warriors.size()){
-                cout << name2 << " doesn't exist" << endl;
-            } else {
-                size_t noble_index{locate_noble(name, nobles)};
-                size_t warrior_index{locate_warrior(name2, warriors)};
-                nobles[noble_index]->hire(*warriors[warrior_index]);
-            } 
-        } else if (command == "Fire"){
-            file >> name >> name2;
-            if (locate_noble(name, nobles) == nobles.size()){
-                cout << name << " doesn't exist" << endl;
-            } else if (locate_warrior(name2, warriors) == warriors.size()){
-                cout << name2 << " doesn't exist" << endl;
-            } else {
-                size_t noble_index{locate_noble(name, nobles)};
-                size_t warrior_index{locate_warrior(name2, warriors)};
-                nobles[noble_index]->fire(*warriors[warrior_index]);
-            } 
-        } else if (command == "Battle"){
-            file >> name >> name2;
-            if (locate_noble(name, nobles) == nobles.size()){
-                cout << name << " doesn't exist" << endl;
-            } else if (locate_noble(name2, nobles) == nobles.size()){
-                cout << name2 << " doesn't exist" << endl;
-            } else {
-                size_t noble_index{locate_noble(name, nobles)};
-                size_t noble2_index{locate_noble(name2, nobles)};
-                nobles[noble_index]->battle(*nobles[noble2_index]);
-            } 
-        } else if (command == "Status"){
-            for (size_t i{}; i < nobles.size(); i++){
-                cout << *nobles[i] << endl;
-            }
-        } else if (command == "Clear"){
-            for (size_t i{nobles.size()}; i > 0; i--){
-                delete nobles[i-1];
-                nobles[i-1] = nullptr;
-                nobles.pop_back();
-            }
-            nobles.clear();
-            for (size_t i{warriors.size()}; i > 0; i--){
-                delete warriors[i-1];
-                warriors[i-1] = nullptr;
-                warriors.pop_back();
-            }
-            warriors.clear();
-        }
-    }
+     while (file >> command){
+          if (command == "Noble"){
+               file >> name;
+               if (locate_noble(name, nobles) == nobles.size()){
+                    nobles.push_back(new Noble(name));
+               }
+               else {
+                    cout << name << " already exists" << endl;
+               }
+          } else if (command == "Warrior"){
+               file >> name >> strength;
+               if (locate_warrior(name, warriors) == warriors.size()){
+                    warriors.push_back(new Warrior(name, strength));
+               }
+               else {
+                    cout << name << " already exists" << endl;
+               }
+          } else if (command == "Hire"){
+               file >> name >> name2;
+               if (locate_noble(name, nobles) == nobles.size()){
+                    cout << name << " doesn't exist" << endl;
+               } else if (locate_warrior(name2, warriors) == warriors.size()){
+                    cout << "Attempting to hire using unknown warrior: " << name2 << endl;
+               } else {
+                    size_t noble_index{locate_noble(name, nobles)};
+                    size_t warrior_index{locate_warrior(name2, warriors)};
+                    nobles[noble_index]->hire(*warriors[warrior_index]);
+               } 
+          } else if (command == "Fire"){
+               file >> name >> name2;
+               if (locate_noble(name, nobles) == nobles.size()){
+                    cout << name << " doesn't exist" << endl;
+               } else if (locate_warrior(name2, warriors) == warriors.size()){
+                    cout << name2 << " doesn't exist" << endl;
+               } else {
+                    size_t noble_index{locate_noble(name, nobles)};
+                    size_t warrior_index{locate_warrior(name2, warriors)};
+                    nobles[noble_index]->fire(*warriors[warrior_index]);
+               } 
+          } else if (command == "Battle"){
+               file >> name >> name2;
+               if (locate_noble(name, nobles) == nobles.size()){
+                    cout << name << " doesn't exist" << endl;
+               } else if (locate_noble(name2, nobles) == nobles.size()){
+                    cout << name2 << " doesn't exist" << endl;
+               } else {
+                    size_t noble_index{locate_noble(name, nobles)};
+                    size_t noble2_index{locate_noble(name2, nobles)};
+                    nobles[noble_index]->battle(*nobles[noble2_index]);
+               } 
+          } else if (command == "Status"){
+               cout << "Status\n======\nNobles:" << endl;
+               if (nobles.size() == 0){
+                    cout << "NONE" << endl;
+               } 
+               else {
+                    for (size_t i{}; i < nobles.size(); i++){
+                         cout << *nobles[i] << endl;
+                    }
+               }
+
+               cout << "\nUnemployed Warriors:" << endl;
+               if (warriors.size() == 0){
+                    cout << "NONE" << endl;
+                    continue;
+               }
+               bool none{true};
+               for (size_t i{}; i < warriors.size(); i++){
+                    if (!warriors[i]->isHired()){
+                         cout << "\t" << *warriors[i] << endl;
+                         none = false;
+                    }
+               }
+               if (none){
+                    cout << "NONE" << endl;
+               }
+          } else if (command == "Clear"){
+               for (size_t i{nobles.size()}; i > 0; i--){
+                    delete nobles[i-1];
+                    nobles[i-1] = nullptr;
+                    nobles.pop_back();
+               }
+               nobles.clear();
+               for (size_t i{warriors.size()}; i > 0; i--){
+                    delete warriors[i-1];
+                    warriors[i-1] = nullptr;
+                    warriors.pop_back();
+               }
+               warriors.clear();
+          }
+     }
 }
 
 size_t locate_noble(string& name, vector<Noble*>& nobles){
-    for (size_t i{}; i < nobles.size(); i++){
-        if (nobles[i]->getName() == name) {
-            return i;
-        }
-    }
+     for (size_t i{}; i < nobles.size(); i++){
+          if (nobles[i]->getName() == name) {
+               return i;
+          }
+     }
 
-    return nobles.size();
+     return nobles.size();
 }
 
 size_t locate_warrior(string& name, vector<Warrior*>& warriors){
-    for (size_t i{}; i < warriors.size(); i++){
-        if (warriors[i]->getName() == name) {
-            return i;
-        }
-    }
+     for (size_t i{}; i < warriors.size(); i++){
+          if (warriors[i]->getName() == name) {
+               return i;
+          }
+     }
 
-    return warriors.size();
+     return warriors.size();
 }
 
