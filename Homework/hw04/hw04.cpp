@@ -1,6 +1,6 @@
 /*
 Author: Adonis Garcia
-File: hw03.cpp
+File: hw04.cpp
 Class: CS-2124
 Purpose: simulating nobles and warriors using classes and pointers
 */
