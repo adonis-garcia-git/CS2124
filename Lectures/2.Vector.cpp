@@ -18,7 +18,7 @@ public:
 	theCap = 0;
 	data = nullptr;    // why here and not list initialization or variable initialization
     }
-    // Vector(size_t size, int value = 0) {}
+    // Vector(size_t size, int value = 0) {}.
 
     // Copy control
 
