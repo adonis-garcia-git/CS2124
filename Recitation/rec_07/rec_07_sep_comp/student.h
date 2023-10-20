@@ -5,6 +5,8 @@
 #include <iostream>
 #include <vector>
 
+namespace BrooklynPoly {
+
 class Course;
 class Student {
     friend std::ostream& operator<<(std::ostream& os, const Student& rhs);
@@ -21,5 +23,7 @@ private:
     std::string name;
     std::vector<Course*> courses;
 };
+
+}
 
 #endif

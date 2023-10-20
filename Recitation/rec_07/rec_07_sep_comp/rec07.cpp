@@ -6,7 +6,10 @@
   fix the cyclic association.
  */
 
+#include "registrar.h"
 
+using namespace std;
+using namespace BrooklynPoly;
 
 int main() {
 

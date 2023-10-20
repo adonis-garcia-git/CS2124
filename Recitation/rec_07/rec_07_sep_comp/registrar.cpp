@@ -4,6 +4,8 @@
 
 using namespace std;
 
+namespace BrooklynPoly {
+
 Registrar::Registrar(){};
 
 bool Registrar::addCourse(const string& courseName){
@@ -98,4 +100,6 @@ ostream& operator<<(ostream& os, const Registrar& aRegistrar){
         os << *student << endl;
     }
     return os;
+}
+
 }

@@ -4,6 +4,8 @@
 
 using namespace std;
 
+namespace BrooklynPoly {
+
 Student::Student(const string& name) : name(name) {}
 
 const string& Student::getName() const {
@@ -44,4 +46,6 @@ ostream& operator<<(ostream& os, const Student& aStudent){
     }
 
     return os;
+}
+
 }

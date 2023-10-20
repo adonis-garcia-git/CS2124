@@ -5,6 +5,8 @@
 #include <iostream>
 #include <vector>
 
+namespace BrooklynPoly {
+
 class Course;
 class Student;
 
@@ -26,5 +28,7 @@ private:
     std::vector<Course*> courses;
     std::vector<Student*> students;
 };
+
+}
 
 #endif
