@@ -139,12 +139,20 @@ int main() {
 Registrar::Registrar(){};
 
 bool Registrar::addCourse(const string& courseName){
+    if (findCourse(courseName) != courses.size()){
+        return false;
+    }
+
     courses.push_back(new Course(courseName));
     
     return true;
 }
 
 bool Registrar::addStudent(const string& studentName){
+    if (findStudent(studentName) != students.size()){
+        return false;
+    }
+
     students.push_back(new Student(studentName));
     
     return true;
@@ -161,14 +169,24 @@ bool Registrar::enrollStudentInCourse(const string& studentName, const string& c
     Course* coursePointer{courses[courseIndex]};
     Student* studentPointer{students[studentIndex]};
 
-    coursePointer->addStudent(studentPointer);
-    studentPointer->addCourse(coursePointer);
+    if (!coursePointer->addStudent(studentPointer)){
+        return false;
+    };
+    
+    if (!studentPointer->addCourse(coursePointer)){
+        return false;
+    };
     
     return true;
 }
 
 bool Registrar::cancelCourse(const string& courseName){
     size_t index{findCourse(courseName)};
+
+    if (index == courses.size()){
+        return false;
+    }
+
     Course* coursePointer{courses[index]};
 
     coursePointer->removeStudentsFromCourse();
@@ -185,7 +203,6 @@ bool Registrar::cancelCourse(const string& courseName){
 
 void Registrar::purge(){
     for (Course* course : courses){
-        course->removeStudentsFromCourse();
         delete course;
         course = nullptr;
     }
@@ -254,8 +271,14 @@ const string& Student::getName() const {
     return name;
 }
 
-bool Student::addCourse(Course* course){
-    courses.push_back(course);
+bool Student::addCourse(Course* aCourse){
+    for (const Course* course : courses){
+        if (aCourse == course){
+            return false;
+        }
+    }
+
+    courses.push_back(aCourse);
 
     return true;
 }
@@ -265,6 +288,7 @@ void Student::removedFromCourse(Course* course){
     for (size_t i{}; i < courses.size(); i++){
         if (course == courses[i]){
             index = i;
+            break;
         }
     }
 
@@ -283,7 +307,7 @@ ostream& operator<<(ostream& os, const Student& aStudent){
         return os;
     }
 
-    for (Course* course : aStudent.courses){
+    for (const Course* course : aStudent.courses){
         cout << course->getName() << " ";
     }
 
@@ -310,8 +334,13 @@ const string& Course::getName() const {
     return name;
 }
 
-bool Course::addStudent(Student* student){
-    students.push_back(student);
+bool Course::addStudent(Student* aStudent){
+    for (const Student* student : students){
+        if (aStudent == student){
+            return false;
+        }
+    }
+    students.push_back(aStudent);
 
     return true;
 }
@@ -332,7 +361,7 @@ ostream& operator<<(ostream& os, const Course& aCourse){
         return os;
     }
 
-    for (Student* student : aCourse.students){
+    for (const Student* student : aCourse.students){
         cout << student->getName() << " ";
     }
 
