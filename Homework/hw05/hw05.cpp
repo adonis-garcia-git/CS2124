@@ -2,7 +2,8 @@
 Author: Adonis Garcia
 File: hw05.cpp
 Class: CS-2124
-Purpose: simulating nobles and warriors using classes and pointers
+Purpose: simulating nobles and warriors using classes, pointers
+vectors, operator overloading, and file I/O
 */
 
 #include <iostream>
