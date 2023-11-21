@@ -1,0 +1,66 @@
+class ScatPlot : public Plot {
+    friend ostream& operator<<(ostream& os, const ScatPlot& rhs){
+        os << "Title: " << rhs.get_name() << endl;
+        os << "Color: " << rhs.color << endl;
+        for (const Point* point : rhs.points){
+            os << *point << endl;
+        }
+        return os;
+    }
+
+public:
+    ScatPlot(const string& title, const string& color, bool display = false)
+    : Plot(title), color(color), display(display) {}
+
+    ScatPlot(const ScatPlot& other)
+    : Plot(other), color(other.color), display(other.display) {
+        for (size_t i = 0; i < other.points.size(); i++){
+            points.push_back(new Point(*other.points[i]));
+        }
+    }
+
+    ScatPlot& operator=(const ScatPlot& other){
+        if (this != &other){
+            Plot::operator=(other);
+            color = other.color;
+            display = other.display;
+            for (size_t i = 0; i < points.size(); i++){
+                delete points[i];
+            }
+            points.clear();
+            for (size_t i = 0; i < other.points.size(); i++){
+                points.push_back(new Point(*other.points[i]));
+            }
+            return *this;
+        }
+    }
+
+    ~ScatPlot(){
+        for (size_t i = 0; i < points.size(); i++){
+            delete points[i];
+        }
+        points.clear();
+    }
+
+    Point* operator[](int index) const {
+        if (index >= points.size()) return nullptr;
+        return points[i];
+    }
+
+    bool find(const Point& point) const {
+        for (const Point* aPoint : points){
+            if (aPoint == &point) return true;
+            // if (*aPoint == point) return true;
+        }
+        return false;
+    }
+
+    operator bool() const {
+        return display;
+    }
+
+private:
+    string color;
+    bool display;
+    vector<Point*> points;
+}

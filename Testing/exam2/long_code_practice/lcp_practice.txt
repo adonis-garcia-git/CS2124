@@ -1,0 +1,65 @@
+class BT : public Tournament {
+    friend ostream& operator<<(ostream& os, const BT& rhs){
+        os << rhs.get_name() << " " << rhs.court << endl;
+        for (const Team* team : rhs.my_team){
+            os << *team << endl;
+        } 
+        return os;
+    }
+
+public:
+    BT(const string& name, const string& court)
+    : Tournament(name), court(court) {}
+
+    BT(const BT& other)
+    : Tournament(other), court(other.court) {
+        for (size_t i = 0; i < other.my_team.size(); i+=){
+            my_team.push_back(new Team(other.my_team[i]));
+        } 
+    }
+
+    BT& operator=(const BT& other){
+        if (this != &other){
+            Tournament::operator=(other);
+            court = other.court;
+            for (size_t i = 0; i < my_team.size(); i++){
+                delete my_team[i];
+            }
+            my_team.clear();
+            for (size_t i = 0; i < other.my_team.size(); i+=){
+                my_team.push_back(new Team(*other.my_team[i]));
+            }
+        } 
+        return *this;
+    }
+
+    ~BT() {
+        for (size_t i = 0; i < my_team.size(); i++){
+            delete my_team[i];
+        }
+        my_team.clear();
+    }
+
+    const string& getName() const {     /// Not Necessary
+        return get_name();
+    }
+
+private:
+    string court;
+    vector<Team*> my_team;
+};
+
+BT operator+(const BT& lhs, const BT& rhs){
+    BT result = lhs;
+    bool valid = true;
+    for (size_t i = 0; i < rhs.my_team.size(); i++){
+        valid = true;
+        for (size_t j = 0; j < result.my_team.size(); j++){
+            if (*result.my_team[j] == *rhs.my_team[i]){
+                valid = false;
+            }
+        }
+        if (valid) result.my_team.push_back(new Team(rhs.my_team[i]))
+    }
+    return result;
+}

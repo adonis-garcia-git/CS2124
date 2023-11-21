@@ -1,0 +1,67 @@
+class SWatch : public Watch {
+    friend ostream& operator<<(ostream& os, const SWatch& rhs){
+        os << "Serial: " << rhs.get_serial() << endl;
+        os << "IMEI: " << rhs.imei << endl;
+        for (const App* app : rhs.apps){
+            os << *app << endl;
+        }
+        return os;
+    }
+
+public:
+    SWatch(int serial_number, const string& imei)
+    : Watch(serial_number), imei(imei), connected(false) {}
+
+    SWatch(const SWatch& other)
+    : Watch(other), imei(other.imei), connected(other.connected) {
+        for (size_t i = 0; i < other.apps.size(); i++){
+            apps.push_back(new App(*other.apps[i]));
+        }
+    }
+
+    SWatch& operator=(const SWatch other){
+        if (this != &other){
+            Watch::operator=(other);
+            imei = other.imei;
+            connected = other.connected;
+            for (size_t i = 0; i < apps.size(); i++){
+                delete apps[i];
+                apps[i] = nullptr;
+            }
+            apps.clear();
+            for (size_t i = 0; i < other.apps.size(); i++){
+                apps.push_back(new App(*other.apps[i]));
+            }
+        }
+        return *this;
+    }
+
+    ~SWatch(){
+        for (size_t i = 0; i < apps.size(); i++){
+            delete apps[i];
+            apps[i] = nullptr;
+        }
+        apps.clear();
+    }
+
+    SWatch& operator+=(const SWatch& other){
+        bool valid;
+        for (size_t i = 0; i < other.apps.size(); i++){
+            valid = true;
+            for (size_t j = 0; j < apps.size(); j++){
+                if (*others.apps[i] == *apps[j]) valid = false;
+            }
+            if (valid) apps.push_back(new App(*other.apps[i]));
+        }
+        return *this;
+    }
+
+    operator bool() const {
+        return connected;
+    }
+
+private;
+    string imei;
+    bool connected;
+    vector<App*> apps;
+};
