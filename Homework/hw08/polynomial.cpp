@@ -10,6 +10,10 @@ ostream& operator<<(ostream& os, const Polynomial& rhs){
     Polynomial::Node* curr = rhs.header->next;
     int count = rhs.degree;
     bool began = false;
+    if (!rhs.degree && curr->val == 0){
+        os << 0;
+        return os;
+    }
     while (curr){
         if (curr->val != 0){
             if (began) os << "+";
@@ -42,6 +46,49 @@ Polynomial::Polynomial(const vector<int>& input)
         degree++;
     }
     if (degree) degree--;
+}
+
+Polynomial::Polynomial(const Polynomial& other)
+: header(new Node), degree(other.degree) {
+    Node* curr = header;
+    Node* other_curr = other.header->next;
+    while (other_curr) {
+        curr->next = new Node{other_curr->val};
+        curr = curr->next;
+        other_curr = other_curr->next;
+    }
+}
+
+Polynomial& Polynomial::operator=(const Polynomial& other){
+    if (this != &other){
+        Node* curr = header->next;
+        Node* after;
+        while (curr){
+            after = curr->next;
+            delete curr;
+            curr = after;
+        }
+        curr = header;
+        Node* other_curr = other.header->next;
+        while (other_curr) {
+            curr->next = new Node{other_curr->val};
+            curr = curr->next;
+            other_curr = other_curr->next;
+        }
+        degree = other.degree;
+    }
+    return *this;
+}
+
+Polynomial::~Polynomial(){
+    Node* curr = header->next;
+    Node* after;
+    while (curr){
+        after = curr->next;
+        delete curr;
+        curr = after;
+    }
+    header->next = nullptr;
 }
 
 Polynomial& Polynomial::operator+=(const Polynomial& other){
@@ -102,4 +149,18 @@ bool Polynomial::operator==(const Polynomial& other) const{
         other_curr = other_curr->next;
     }
     return true;
+}
+
+bool Polynomial::operator!=(const Polynomial& other) const{
+    return !(*this == other);
+}
+
+int Polynomial::evaluate(int val) const{
+    int result = header->next->val;
+    Node* curr = header->next;
+    while (curr->next) {
+      curr = curr->next;
+      result = curr->val + (val * result);  
+    }
+    return result;
 }

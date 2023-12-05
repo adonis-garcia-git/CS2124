@@ -22,6 +22,12 @@ public:
 
     Polynomial(const std::vector<int>& input);
 
+    Polynomial(const Polynomial& other);
+
+    Polynomial& operator=(const Polynomial& other);
+
+    ~Polynomial();
+
     Polynomial& operator+=(const Polynomial& other);
 
     void copy_higher_degree(const Node* node, int count);
@@ -30,7 +36,11 @@ public:
 
     bool operator==(const Polynomial& other) const;
 
-private:
+    bool operator!=(const Polynomial& other) const;
+
+    int evaluate(int val) const;  
+
+private:    
     Node* header;
     int degree;
 };

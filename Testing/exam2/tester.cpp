@@ -164,26 +164,93 @@ using namespace std;
 // }
 
 
-class Pet {
+// class Pet {
+// public:
+//     Pet() { cout << "A "; }
+//     ~Pet() { cout << "B "; }
+// };
+
+// class Bird : public Pet {
+// public:
+//     Bird() { cout << "C "; }
+//     ~Bird() { cout << "D "; }
+// };
+
+// class Parrot : public Bird {
+// public:
+//     Parrot() { cout << "E "; }
+//     virtual ~Parrot() { cout << "F "; }
+// };
+
+// int main() {
+//     Bird* ptr = new Parrot();
+//     delete ptr;
+// }
+
+// class Automobile {
+// protected: // NOTE PROTECTED!!!
+//     void accelerate() {}
+// };
+
+// class Car : public Automobile {};
+
+// class Truck : public Automobile {
+// public:
+//     void crash(Car& car) {
+//         car.accelerate(); // Line A
+//     }
+// };
+
+// int main() {
+//     Car c1;
+//     Truck t1;
+//     t1.crash(c1); // Line B
+// }
+
+#include <iostream>
+using namespace std;
+
+// Base class
+class Parent {
 public:
-    Pet() { cout << "A "; }
-    ~Pet() { cout << "B "; }
+    virtual void display() const {
+        cout << "Display of Parent" << endl;
+    }
 };
 
-class Bird : public Pet {
+// Derived class
+class Child : public Parent {
 public:
-    Bird() { cout << "C "; }
-    ~Bird() { cout << "D "; }
+    void display() {
+        cout << "Display of Child" << endl;
+    }
 };
 
-class Parrot : public Bird {
+// Further derived class
+class Grandchild : public Child {
 public:
-    Parrot() { cout << "E "; }
-    virtual ~Parrot() { cout << "F "; }
+    void display() {
+        cout << "Display of Grandchild" << endl;
+    }
+};
+
+// Even further derived class
+class Grandgrandchild : public Grandchild {
+public:
+    void display() const {
+        cout << "Display of Grandgrandchild" << endl;
+    }
 };
 
 int main() {
-    Bird* ptr = new Parrot();
-    delete ptr;
+    Parent* obj1 = new Parent(); // Upcast, but dynamic binding will call the most derived version
+    Parent* obj2 = new Child(); // Upcast, but dynamic binding will call the most derived version
+    Parent* obj3 = new Grandchild(); // Upcast, but dynamic binding will call the most derived version
+    Parent* obj4 = new Grandgrandchild(); // Upcast, but dynamic binding will call the most derived version
+
+    obj1->display();
+    obj2->display();
+    obj3->display();
+    obj4->display();
 }
 
