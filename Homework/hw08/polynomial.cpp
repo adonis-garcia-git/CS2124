@@ -46,6 +46,7 @@ Polynomial::Polynomial(const vector<int>& input)
         degree++;
     }
     if (degree) degree--;
+    clear_zeros();
 }
 
 Polynomial::Polynomial(const Polynomial& other)
@@ -115,6 +116,7 @@ Polynomial& Polynomial::operator+=(const Polynomial& other){
         curr = curr->next;
         other_curr = other_curr->next;
     }
+    clear_zeros();
     return *this;
 }
 
@@ -133,8 +135,7 @@ void Polynomial::copy_higher_degree(const Node* node, int count){
 }   
 
 Polynomial Polynomial::operator+(const Polynomial& other){
-    Polynomial result; // could be improved with copy construct
-    result += *this;
+    Polynomial result(*this);
     result += other;
     return result;
 }
@@ -164,3 +165,13 @@ int Polynomial::evaluate(int val) const{
     }
     return result;
 }
+
+void Polynomial::clear_zeros(){
+    Node* curr = header->next;
+    while (curr->next && curr->val == 0){
+        header->next = curr->next;
+        delete curr;
+        curr = header->next;
+        degree--;
+    }
+} 
